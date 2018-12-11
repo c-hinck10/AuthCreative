@@ -4,6 +4,7 @@
 <head>
     <title>User Login and Sessions</title>
     <link rel="stylesheet" type="text/css" href="/stylesheets/style.css" />
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
         
 <body>  
@@ -13,8 +14,22 @@
         </h2>
         <a id="logoutLink" href="/logout">Logout</a>&nbsp
         <a id="editLink" href="/user">Edit User</a>
-        <p>Place Your Code Here
-            <p>
+        <div class="row" id="weatherRow">
+      <div class="column">
+        <form>
+          <label>Enter A Utah City:</label><br>
+          <input type="text" id="cityField" value="" class="form-control" size="50" placeholder="City Name">
+          <button id="weatherButton" type="submit" value="Submit" class="btn btn-primary">Submit</button><br><br>
+          <div id="suggestions" align="left"><span id="txtHint" align="left"><ul><li>Empty</li></ul></span></div>
+        </form>
+      </div>
+
+      <div class="column">
+        <p>City</p>
+        <p id="displayCity">No City</p>
+        <div id="weather">No weather</div>
+      </div>
+    </div>
     </div>
     <hr>
     <span id="indexMsg">
@@ -22,11 +37,101 @@
     </span>
     <hr>
     <span id="colorText">
-    Color
-        <%= color %>
+    Location:
+        <%= location %>
       </span>
     <script src="http://code.angularjs.org/1.2.9/angular.min.js"></script>
     <script src="/javascripts/my_app.js"></script>
+  <script>
+    $(document).ready(function() {
+    var city = $("#colorText").text();
+    console.log("citylength" +city.length);
+    var newCity = city.substr(23,city.length-10);
+    console.log("newCity: " + newCity);
+    console.log('City: ' + city);
+     var myurl = "/getweather?q=" + newCity;
+        console.log(myurl);
+        $.ajax({
+          url: myurl,
+          dataType: "json",
+          success: function(parsed_json) {
+            var location = parsed_json['name'];
+            var weather = parsed_json['weather'][0]['main'];
+            var temp = parsed_json['main']['temp'];
+            var weather_icon = parsed_json['weather'][0]['icon'];
+            var humidity = parsed_json['main']['humidity'];
+            var temp_min = parsed_json['main']['temp_min'];
+            var temp_max = parsed_json['main']['temp_max'];
+            var wind_speed = parsed_json['wind']['speed'];
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything += "<ul>";
+            everything += "<li>Location: " + location;
+            everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";
+            everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+            everything += "<li>Humidity: " + humidity + "%";
+            everything += "<li>Wind: " + wind_speed + " mph";
+            everything += "</ul>";
+            $("#weather").html(everything);
+          }
+        });
+      });
+
+
+    
+      $("#cityField").keyup(function() {
+        var url = "/getcity?q=" + $("#cityField").val();
+        console.log("url: " + url);
+        $.getJSON(url, function(data) {
+          console.log(data);
+          var everything;
+          everything = "<ul>";
+          $.each(data, function(i, item) {
+            everything += "<li> " + data[i].city;
+          });
+          everything += "</ul>";
+          $("#txtHint").html(everything);
+        });
+      });
+      $("#weatherButton").click(function(e) {
+        e.preventDefault();
+        $("#displayCity").text($("#cityField").val());
+        var myurl = "/getweather?q=" + $("#cityField").val();
+        console.log(myurl);
+        $.ajax({
+          url: myurl,
+          dataType: "json",
+          success: function(parsed_json) {
+            var location = parsed_json['name'];
+            var weather = parsed_json['weather'][0]['main'];
+            var temp = parsed_json['main']['temp'];
+            var weather_icon = parsed_json['weather'][0]['icon'];
+            var humidity = parsed_json['main']['humidity'];
+            var temp_min = parsed_json['main']['temp_min'];
+            var temp_max = parsed_json['main']['temp_max'];
+            var wind_speed = parsed_json['wind']['speed'];
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything += "<ul>";
+            everything += "<li>Location: " + location;
+            everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";
+            everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+            everything += "<li>Humidity: " + humidity + "%";
+            everything += "<li>Wind: " + wind_speed + " mph";
+            everything += "</ul>";
+            $("#weather").html(everything);
+            if (temp < 60) {
+              $("#step2").html("Step Two: It's too cold to go outside! Go ahead and get creative inside.")
+            }
+            else {
+              $("#step2").html("Step Two: It's pretty warm, so open a window. But, go ahead and be creative inside anyways.")
+            }
+            $(".toFadeIn").css("visibility", "visible").hide().fadeIn('slow');
+          }
+        });
+      });
+
+
+    
+  </script>
 </body>
       
 </html>
