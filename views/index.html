@@ -17,7 +17,8 @@
         <div class="row" id="weatherRow">
       <div class="column">
         <form>
-          <label>Enter A Utah City:</label><br>
+          <br>
+          <label>Enter A City:</label><br>
           <input type="text" id="cityField" value="" class="form-control" size="50" placeholder="City Name">
           <button id="weatherButton" type="submit" value="Submit" class="btn btn-primary">Submit</button><br><br>
           <div id="suggestions" align="left"><span id="txtHint" align="left"><ul><li>Empty</li></ul></span></div>
@@ -25,8 +26,7 @@
       </div>
 
       <div class="column">
-        <p>City</p>
-        <p id="displayCity">No City</p>
+        <p id="displayCity" style = "display:none;"></p>
         <div id="weather">No weather</div>
       </div>
     </div>
@@ -45,8 +45,15 @@
   <script>
     $(document).ready(function() {
     var city = $("#colorText").text();
+    city[0] = city[0].toUpperCase();
+    console.log(city);
     console.log("citylength" +city.length);
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     var newCity = city.substr(23,city.length-10);
+    newCity = capitalizeFirstLetter(newCity);
+    console.log("after caps: " + newCity);
     console.log("newCity: " + newCity);
     console.log('City: ' + city);
      var myurl = "/getweather?q=" + newCity;
@@ -63,7 +70,7 @@
             var temp_min = parsed_json['main']['temp_min'];
             var temp_max = parsed_json['main']['temp_max'];
             var wind_speed = parsed_json['wind']['speed'];
-            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"" + " style=\"width:200px\";\"height:300px;\"" + "/>"
             everything += "<ul>";
             everything += "<li>Location: " + location;
             everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";
@@ -79,7 +86,10 @@
 
     
       $("#cityField").keyup(function() {
-        var url = "/getcity?q=" + $("#cityField").val();
+        function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        var url = "/getcity?q=" + capitalizeFirstLetter($("#cityField").val());
         console.log("url: " + url);
         $.getJSON(url, function(data) {
           console.log(data);
@@ -109,7 +119,8 @@
             var temp_min = parsed_json['main']['temp_min'];
             var temp_max = parsed_json['main']['temp_max'];
             var wind_speed = parsed_json['wind']['speed'];
-            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"" + " style=\"width:200px\";\"height:300px;\"" + "/>";
+            console.log(everything);
             everything += "<ul>";
             everything += "<li>Location: " + location;
             everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";

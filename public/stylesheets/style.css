@@ -4,7 +4,7 @@ html, body, #app {
   height: 100%;
   padding: 0;
   margin: auto;
-  background-color: black;
+  background-color: #ba2e30;
 
   font-family: helvetica;
   color: white;
@@ -137,4 +137,12 @@ a:visited {
 a:hover {
   font-size: 28px;
   color: grey;
+}
+
+li {
+  font-size: 24px;
+}
+
+ul {
+  list-style: none;
 }
